@@ -12,6 +12,6 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 include_directories(src)
 add_subdirectory(glad)
-add_subdirectory(glfw3)
+add_subdirectory(glfw)
 target_link_libraries(${PROJECT_NAME} glad)
 target_link_libraries(${PROJECT_NAME} glfw)
