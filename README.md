@@ -7,13 +7,15 @@ Get started with OpenGL by following this guide:
 ## Building & Running
 Some handy batch files have been provided which will handle the whole build process.
 
-This includes:
+This includes...
+
 `clean.bat`
 `rescan.bat`
 `build.bat`
 `run.bat`
 
 And finally, to run all of the above files...
+
 `all.bat`
 
 ## Accessing Resources
