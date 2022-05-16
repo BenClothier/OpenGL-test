@@ -34,7 +34,7 @@ void Game::instantiateEntity(float x, float y)
 		 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top
 	};
 
-	Entity* newEntity = new Entity(x, y, vertices, "Shaders/sh1.vshader", "Shaders/sh1.fshader");
+	Entity* newEntity = new Entity(x, y, vertices, "resources/shaders/sh1.vs", "resources/shaders/sh1.fs");
 	entities.push_front(newEntity);
 	newEntity->start();
 }
