@@ -12,6 +12,7 @@ void Drawable::draw()
     shader->use();
     glBindVertexArray(VAO);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+    std::cout << glGetError();
 }
 
 void Drawable::initialiseShader(const char* vShaderPath, const char* fShaderPath)
