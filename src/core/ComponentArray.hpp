@@ -54,6 +54,8 @@ public:
 	T& GetData(Entity entity)
 	{
 		assert(entityToIndexMap.find(entity) != entityToIndexMap.end() && "Retrieving non-existent component.");
+
+        // Return reference to the entity's component
 		return componentArray[entityToIndexMap[entity]];
 	}
 
@@ -61,13 +63,21 @@ public:
 	{
 		if (entityToIndexMap.find(entity) != entityToIndexMap.end())
 		{
+            // Remove entity's component
 			RemoveData(entity);
 		}
 	}
 
 private:
+    // A packed array of components, with maximum size of the maximum number of entities
 	std::array<T, MAX_ENTITIES> componentArray{};
+
+    // Map from entity IDs to component-array indexes
 	std::unordered_map<Entity, size_t> entityToIndexMap{};
+
+    // Map from component-array indexes to entity IDs
 	std::unordered_map<size_t, Entity> indexToEntityMap{};
+
+    // Number of valid entries in the array
 	size_t size{};
 };
