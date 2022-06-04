@@ -1,5 +1,5 @@
 #pragma once
-#include "math/Vec3.hpp"
+#include "Math/Vec3.hpp"
 
 struct Transform
 {
