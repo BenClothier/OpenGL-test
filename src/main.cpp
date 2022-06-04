@@ -1,7 +1,13 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+
 #include "Core/Shader.hpp"
+#include "Core/Coordinator.hpp"
+#include "Components/Transform.hpp"
+#include "Components/MeshRenderer.hpp"
+#include "Systems/RenderSystem.hpp"
+#include "Meshes/TriangleMesh.hpp"
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -46,43 +52,38 @@ int main()
 
     // build and compile our shader program
     // ------------------------------------
-    Shader ourShader("resources/shaders/sh1.vs", "resources/shaders/sh1.fs"); // you can name your shader files however you like
+     // you can name your shader files however you like
 
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    float vertices[] = {
-        // positions         // colors
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
-    };
+    Coordinator coordinator;
+    coordinator.Init();
+	coordinator.RegisterComponent<Transform>();
+	coordinator.RegisterComponent<MeshRenderer>();
 
-    unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
+    auto renderSystem = coordinator.RegisterSystem<RenderSystem>();
+    Signature signature;
+    signature.set(coordinator.GetComponentType<Transform>());
+    signature.set(coordinator.GetComponentType<MeshRenderer>());
+	coordinator.SetSystemSignature<RenderSystem>(signature);
+    
+    Entity entity = coordinator.CreateEntity();
+    coordinator.AddComponent(
+        entity,
+        Transform{
+            Vec3(0.0f, 1.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f),
+            Vec3(0.0f, 0.0f, 0.0f)
+        }
+    );
+    coordinator.AddComponent(
+        entity,
+        MeshRenderer{
+            TriangleMesh(),
+            Shader("resources/shaders/sh1.vs", "resources/shaders/sh1.fs")
+        }
+    );
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // Example move drawn triangle up
-    int vertexOffsetLocation = glGetUniformLocation(ourShader.ID, "offset");
-    ourShader.use();
-    glUniform3f(vertexOffsetLocation, 0.0f, 1.0f, 0.0f);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    // glBindVertexArray(0);
-
-
+    renderSystem -> Init();
+    
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -91,15 +92,7 @@ int main()
         // -----
         processInput(window);
 
-        // render
-        // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // render the triangle
-        ourShader.use();
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+		renderSystem -> Update(0);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -109,8 +102,8 @@ int main()
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    // glDeleteVertexArrays(1, &VAO);
+    // glDeleteBuffers(1, &VBO);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
