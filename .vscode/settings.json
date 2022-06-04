@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "unordered_map": "cpp"
     }
 }
