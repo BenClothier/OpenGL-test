@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.20.0)
 
 project(opengl-project)
 
-file(GLOB PROJECT_SRC
+file(GLOB_RECURSE PROJECT_SRC
      "src/*.h"
+     "src/*.hpp"
      "src/*.cpp"
 )
 

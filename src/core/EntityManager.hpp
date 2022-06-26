@@ -1,3 +1,11 @@
+#pragma once
+
+#include <array>
+#include <cassert>
+#include <queue>
+
+#include "Types.hpp"
+
 class EntityManager
 {
 public:
