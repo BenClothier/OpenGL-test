@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#include "Core/System.hpp"
+#include "../Core/System.hpp"
 
 class RenderSystem : public System
 {
