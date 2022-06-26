@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "../Core/System.hpp"
+#include "../Core/Shader.hpp"
 
 class RenderSystem : public System
 {
@@ -14,6 +15,4 @@ public:
 	void Finish();
 private:
 	GLFWwindow* window;
-    unsigned int VBO, VAO;
-	unsigned int shaderProgram;
 };
