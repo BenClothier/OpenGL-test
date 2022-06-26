@@ -1,5 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
 #include "RenderSystem.hpp"
@@ -61,6 +64,7 @@ void RenderSystem::Update(float dt)
         for (auto const& entity : entities)
         {
             MeshRenderer &renderer = coordinator.GetComponent<MeshRenderer>(entity);
+            Transform &transform = coordinator.GetComponent<Transform>(entity);
 
             if (!renderer.initialised)
             {
@@ -75,13 +79,23 @@ void RenderSystem::Update(float dt)
                 // position attribute
                 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
                 glEnableVertexAttribArray(0);
-                
+
                 // color attribute
                 glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
                 glEnableVertexAttribArray(1);
 
                 renderer.initialised = true;
             }
+
+            // translate/rotate/scale shape based on the entity's transform
+            glm::mat4 trans = glm::mat4(1.0f);
+            trans = glm::translate(trans, transform.position);
+            trans = glm::rotate(trans, glm::radians(transform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            trans = glm::rotate(trans, glm::radians(transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            trans = glm::rotate(trans, glm::radians(transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+            trans = glm::scale(trans, transform.scale);
+            unsigned int transformLoc = glGetUniformLocation(renderer.shader.ID, "transform");
+            glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
 
             renderer.shader.use();
             glBindVertexArray(renderer.VAO);
