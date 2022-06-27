@@ -6,9 +6,9 @@
 #include <iostream>
 
 #include "RenderSystem.hpp"
-#include "../Components/MeshRenderer.hpp"
-#include "../Components/Transform.hpp"
-#include "../Core/Coordinator.hpp"
+#include "../components/MeshRenderer.hpp"
+#include "../components/Transform.hpp"
+#include "../core/Coordinator.hpp"
 
 extern Coordinator coordinator;
 

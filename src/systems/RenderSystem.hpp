@@ -4,8 +4,8 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-#include "../Core/System.hpp"
-#include "../Core/Shader.hpp"
+#include "../core/System.hpp"
+#include "../core/Shader.hpp"
 
 class RenderSystem : public System
 {

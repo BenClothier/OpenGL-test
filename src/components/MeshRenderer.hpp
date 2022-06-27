@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Core/Shader.hpp"
-#include "../Meshes/TriangleMesh.hpp"
+#include "../core/Shader.hpp"
+#include "../meshes/TriangleMesh.hpp"
 
 struct MeshRenderer
 {
