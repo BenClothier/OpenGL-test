@@ -34,7 +34,8 @@ int main()
     coordinator.AddComponent(
         entity,
         MeshRenderer{
-            Shader("resources/shaders/sh1.vs", "resources/shaders/sh1.fs")
+            Shader("resources/shaders/sh1.vs", "resources/shaders/sh1.fs"),
+            Texture("resources/example_textures/container.jpg")
         }
     );
 
