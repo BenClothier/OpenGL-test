@@ -1,4 +1,4 @@
-#include "../STB/stb_image.h"
+#include "../stb_lib/stb_image.h"
 
 #include <glad/glad.h>
 
