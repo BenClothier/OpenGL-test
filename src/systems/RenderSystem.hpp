@@ -6,13 +6,15 @@
 
 #include "../core/System.hpp"
 #include "../core/Shader.hpp"
+#include "../core/View.hpp"
 
 class RenderSystem : public System
 {
 public:
-	void Init();
+	void Init(View& view);
 	void Update(float dt);
 	void Finish();
 private:
 	GLFWwindow* window;
+	View view;
 };

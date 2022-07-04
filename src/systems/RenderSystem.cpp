@@ -14,12 +14,14 @@ extern Coordinator coordinator;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+void applyRotation(glm::vec3 rotation, glm::mat4& transform);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-void RenderSystem::Init()
+void RenderSystem::Init(View& view)
 {
+    RenderSystem::view = view;
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -95,22 +97,26 @@ void RenderSystem::Update(float dt)
                 renderer.initialised = true;
             }
 
-            // translate/rotate/scale shape based on the entity's transform component
-            glm::mat4 trans = glm::mat4(1.0f);
-            trans = glm::translate(trans, transform.position);
-            trans = glm::rotate(trans, glm::radians(transform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-            trans = glm::rotate(trans, glm::radians(transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-            trans = glm::rotate(trans, glm::radians(transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-            trans = glm::scale(trans, transform.scale);
-
-            unsigned int transformLoc = glGetUniformLocation(renderer.shader.ID, "transform");
-            glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
             // bind texture
             glBindTexture(GL_TEXTURE_2D, renderer.texture.texture);
 
-            // render
+            // activate shader
             renderer.shader.use();
+
+            // create transformations
+            glm::mat4 modelMat = glm::translate(glm::mat4(1.0f), transform.position);
+            applyRotation(transform.rotation, modelMat);
+            modelMat = glm::scale(modelMat, transform.scale);
+
+            glm::mat4 viewMat  = glm::translate(glm::mat4(1.0f), -view.transform.position);
+            
+            glm::mat4 projectionMat = glm::perspective(glm::radians(view.fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, view.nearClip, view.farClip);
+            applyRotation(view.transform.rotation, projectionMat);
+
+            renderer.shader.setMat4("model", modelMat);
+            renderer.shader.setMat4("view", viewMat);
+            renderer.shader.setMat4("projection", projectionMat);
+
             glBindVertexArray(renderer.VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }
@@ -131,6 +137,13 @@ void RenderSystem::Finish()
     }
 
     glfwTerminate();
+}
+
+void applyRotation(glm::vec3 rotation, glm::mat4& transform)
+{
+    transform = glm::rotate(transform, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+    transform = glm::rotate(transform, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+    transform = glm::rotate(transform, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
