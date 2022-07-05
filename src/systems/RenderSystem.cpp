@@ -107,15 +107,13 @@ void RenderSystem::Update(float dt)
             glm::mat4 modelMat = glm::translate(glm::mat4(1.0f), transform.position);
             applyRotation(transform.rotation, modelMat);
             modelMat = glm::scale(modelMat, transform.scale);
-
-            glm::mat4 viewMat  = glm::translate(glm::mat4(1.0f), -view.transform.position);
             
-            glm::mat4 projectionMat = glm::perspective(glm::radians(view.fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, view.nearClip, view.farClip);
-            applyRotation(view.transform.rotation, projectionMat);
+            glm::mat4 viewMat = glm::perspective(glm::radians(view.fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, view.nearClip, view.farClip);
+            applyRotation(view.transform.rotation, viewMat);
+            viewMat *= glm::translate(glm::mat4(1.0f), -view.transform.position);
 
             renderer.shader.setMat4("model", modelMat);
             renderer.shader.setMat4("view", viewMat);
-            renderer.shader.setMat4("projection", projectionMat);
 
             glBindVertexArray(renderer.VAO);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
